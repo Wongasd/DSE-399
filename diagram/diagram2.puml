@@ -1,0 +1,14 @@
+@startuml
+start
+:User Tries to Access Online Books;
+if (Membership Check?) then (Not a Member)
+  :Redirect to index.php;
+else (Member)
+  if (Banned Check?) then (Banned)
+    :Redirect to index.php;
+  else (Not Banned)
+    :Redirect to all_books_online.php;
+  endif
+endif
+stop
+@enduml

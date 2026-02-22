@@ -6,26 +6,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $Email = trim($_POST['Email']);
     $Password = trim($_POST['Password']);
 
-    $query = "SELECT u.*,CONCAT(u.FirstName, ' ', u.LastName) as FullName,p.PermissionName FROM `users` as u inner join permission as p on u.Permission = p.PermissionID WHERE Email = '".$Email."'";
-    $sql = mysqli_query($conn,$query);
+    $query = "SELECT u.*, CONCAT(u.FirstName, ' ', u.LastName) as FullName, p.PermissionName 
+              FROM `users` as u 
+              INNER JOIN permission as p ON u.Permission = p.PermissionID 
+              WHERE Email = '".$Email."'";
+    $sql = mysqli_query($conn, $query);
     $rows = mysqli_num_rows($sql);
-	
+    
     if($rows == 1){
         $row = mysqli_fetch_array($sql, MYSQLI_ASSOC);
-
         $hashedPassword = $row['Password'];
 
         if(password_verify($Password, $hashedPassword)){
-
             $_SESSION['UserID'] = $row['UserID'];
             $_SESSION['Permission'] = $row['Permission'];
             $_SESSION['Status'] = $row['Status'];
             $_SESSION['UserName'] = $row['FullName'];
 
             echo "<script>alert('Login Success');window.location.href='index.php';</script>";
-        }else{
-            echo "<script>alert('Invalid Password');</script>";
+        } else {
+            echo "<script>alert('Invalid Password');window.location.href='login.php';</script>";
+            exit;
         }
+    } else {
+        echo "<script>alert('Email not found');window.location.href='login.php';</script>";
+        exit;
     }
 }
 ?>

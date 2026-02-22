@@ -3,77 +3,93 @@
 include_once("database/db.php");
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-   
+
     $FirstName = trim($_POST['FirstName']);
     $LastName = trim($_POST['LastName']);
     $Email = trim($_POST['Email']);
     $Password = trim($_POST['Password']);
     $Phone = trim($_POST['Phone']);
-    $CountryCode = trim($_POST['CountryCode']); // Get the country code
+    $CountryCode = trim($_POST['CountryCode']);
     $Address = trim($_POST['Address']);
-    $MembershipDate = date('Y-m-d');  // Automatically sets the current date as membership date
-    $Permission = 2;  // Automatically set permission as "borrower"
 
+    $MembershipDate = date('Y-m-d');
+    $Permission = 2; // borrower
+    $Status = "Available"; // ✅ NEW: default status
+
+    // Hash password
     $hashedPassword = password_hash($Password, PASSWORD_BCRYPT);
 
-    // Handling image upload
+    // Handle image upload
     $imageDir = "db_image/";
-    $ImageName = $_FILES['Image']['name'];
-    $ImageTemp = $_FILES['Image']['tmp_name'];
-    $ImagePath = $imageDir . basename($ImageName);
-
-        if (empty($ImageName)) {
-        $ImagePath = $imageDir . "default_pic.png";
-    } else {
-        // If user uploads an image → save it
-        $ImagePath = $imageDir . basename($ImageName);
-        move_uploaded_file($ImageTemp, $ImagePath);
+    if (!is_dir($imageDir)) {
+        mkdir($imageDir, 0755, true);
     }
 
-    // Check if the required fields are empty
-    if (empty($FirstName) || empty($LastName) || empty($Email)) {
-        echo "<script>alert('First Name, Last Name, Email, and Profile Image are required')</script>";
+    if (!empty($_FILES['Image']['name'])) {
+        $ImageName = basename($_FILES['Image']['name']);
+        $ext = pathinfo($ImageName, PATHINFO_EXTENSION);
+        $uniqueName = uniqid('user_', true) . '.' . $ext;
+        $ImagePath = $imageDir . $uniqueName;
+
+        if (!move_uploaded_file($_FILES['Image']['tmp_name'], $ImagePath)) {
+            echo "<script>alert('Image upload failed. Check folder permissions.');</script>";
+            $ImagePath = $imageDir . "default_pic.png";
+        }
     } else {
-        
-        // Check if the email is already registered
-        $stmt = $conn->prepare("SELECT * FROM users WHERE Email = ?");
-        $stmt->bind_param("s", $Email); // Bind the email parameter
+        $ImagePath = $imageDir . "default_pic.png";
+    }
+
+    // Validate required fields
+    if (empty($FirstName) || empty($LastName) || empty($Email) || empty($Password)) {
+        echo "<script>alert('First Name, Last Name, Email and Password are required')</script>";
+    } else {
+
+        // Check if email exists
+        $stmt = $conn->prepare("SELECT UserID FROM users WHERE Email = ?");
+        $stmt->bind_param("s", $Email);
         $stmt->execute();
         $result = $stmt->get_result();
 
-        // If email is found, show an error message
         if ($result->num_rows > 0) {
             echo "<script>alert('Email already exists')</script>";
         } else {
-        
-            // Concatenate the country code with the phone number
+
+            // Combine country code + phone
             $Phone = $CountryCode . $Phone;
 
-            // Validate and upload the profile image
-            if (move_uploaded_file($ImageTemp, $ImagePath)) {
-                // If image upload is successful, insert data into the database
-                $stmt = $conn->prepare("INSERT INTO users (FirstName, LastName, Email, Password, Phone, Address, MembershipDate, Permission, Image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                $stmt->bind_param("sssssssss", $FirstName, $LastName, $Email, $hashedPassword, $Phone, $Address, $MembershipDate, $Permission, $ImagePath);
+            // ✅ INSERT with Status field
+            $stmt = $conn->prepare("
+                INSERT INTO users 
+                (FirstName, LastName, Email, Password, Phone, Address, MembershipDate, Permission, Status, Image) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ");
 
-                // Execute the statement and check for success
-                if ($stmt->execute()) {
-                    echo "<script>alert('Register Success');window.location.href='login.php';</script>";
-                    exit();  // Stop further execution of code
-                } else {
-                    echo "<script>alert('Error!, Please Try Again')</script>";
-                }
+            $stmt->bind_param(
+                "ssssssssss",
+                $FirstName,
+                $LastName,
+                $Email,
+                $hashedPassword,
+                $Phone,
+                $Address,
+                $MembershipDate,
+                $Permission,
+                $Status,
+                $ImagePath
+            );
+
+            if ($stmt->execute()) {
+                echo "<script>alert('Register Success');window.location.href='login.php';</script>";
+                exit();
             } else {
-                echo "<script>alert('Image upload failed. Please try again.');</script>";
+                echo "<script>alert('Error! Please try again.')</script>";
             }
 
-            // Close statement
             $stmt->close();
         }
     }
 }
 ?>
-
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -93,10 +109,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link rel="shortcut icon" href="assets/ico/favicon.png">
 
     <style>
-            label {
-                color: white; /* Set label text color to white */
-            }
-        </style>
+        label {
+            color: white; /* Set label text color to white */
+        }
+    </style>
 </head>
 
 <body>
@@ -189,38 +205,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <script src="assets/js/scripts.js"></script>
 
     <script>
-        // Function to update the phone number length based on the selected country code
+        // Update phone number maxlength based on country
         function updatePhoneLength() {
             var countryCode = document.getElementById('CountryCode').value;
             var phoneField = document.getElementById('Phone');
-
-            // Set maxlength based on selected country code
-            if (countryCode === "+60") { // Malaysia
-                phoneField.setAttribute('maxlength', '10');
-            } else if (countryCode === "+65") { // Singapore
-                phoneField.setAttribute('maxlength', '8');
-            }
+            if (countryCode === "+60") phoneField.setAttribute('maxlength', '10');
+            else if (countryCode === "+65") phoneField.setAttribute('maxlength', '8');
         }
-
-        // Call the function initially to set the correct length
         updatePhoneLength();
 
+        // Toggle password visibility
         function togglePassword() {
-        const passwordField = document.getElementById("Password");
-        const toggleIcon = document.getElementById("togglePasswordIcon");
-
-        if (passwordField.type === "password") {
-            passwordField.type = "text";
-            toggleIcon.classList.remove("fa-eye");
-            toggleIcon.classList.add("fa-eye-slash");
-        } else {
-            passwordField.type = "password";
-            toggleIcon.classList.remove("fa-eye-slash");
-            toggleIcon.classList.add("fa-eye");
+            const passwordField = document.getElementById("Password");
+            const toggleIcon = document.getElementById("togglePasswordIcon");
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                toggleIcon.classList.remove("fa-eye");
+                toggleIcon.classList.add("fa-eye-slash");
+            } else {
+                passwordField.type = "password";
+                toggleIcon.classList.remove("fa-eye-slash");
+                toggleIcon.classList.add("fa-eye");
+            }
         }
-    }
     </script>
 
 </body>
-
 </html>

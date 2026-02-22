@@ -17,10 +17,22 @@ if(isset($_POST['submit'])){
     $dueDate = $_POST['dueDate'];
     $Quantity = $_POST['Quantity'];
 
+    // Check if user already borrowed this book
+    $checkBorrow = "SELECT * FROM transactions WHERE BookID='$bookID' AND UserID='$UserId' AND Status IN ('PENDING','BORROWED')";
+    $qryCheck = mysqli_query($conn, $checkBorrow);
+
+    if(mysqli_num_rows($qryCheck) > 0){
+        echo "<script>alert('You can only borrow this book once.');window.location.href='borrow.php?BookID=$bookID';</script>";
+    }
     // Check if book is available or quantity is sufficient
-    if($bookStatus == "Unavailable" || $maxQuantity < $Quantity){
+    elseif($bookStatus == "Unavailable" || $maxQuantity < $Quantity){
         echo "<script>alert('Request borrow failed. Book is out of stock or unavailable.');window.location.href='index.php';</script>";
-    } else {
+    } 
+    // Check quantity <= 1
+    elseif($Quantity > 1){
+        echo "<script>alert('Book can only be borrowed once per person.');window.location.href='borrow.php?BookID=$bookID';</script>";
+    }
+    else {
         $sql = "INSERT INTO transactions (BookID, Quantity, UserID, BorrowDate, DueDate, Status) 
                 VALUES ('$bookID', $Quantity, '$UserId', '$formDate', '$dueDate', 'PENDING')";
         if($qry = mysqli_query($conn, $sql)){
@@ -84,8 +96,8 @@ if(isset($_POST['submit'])){
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="Quantity">Quantity</label>
-                                        <input type="number" id="Quantity" name="Quantity" class="form-control" value="<?=$maxQuantity?>" disabled>
+                                        <label for="Stock">Stock</label>
+                                        <input type="number" id="Stock" name="Stock" class="form-control" value="<?=$maxQuantity?>" disabled>
                                     </div>                                    
                                 
                                     <div class="form-group">
@@ -100,8 +112,8 @@ if(isset($_POST['submit'])){
                                     
 
                                     <div class="form-group">
-                                        <label for="dueDate">Quantity</label>
-                                        <input type="number" id="Quantity" name="Quantity" class="form-control" value="1" min="1" max="<?=$maxQuantity?>">
+                                        <label for="Quantity">Quantity</label>
+                                        <input type="number" id="Quantity" name="Quantity" class="form-control" value="1" min="1" max="1">
                                     </div>
 
                                     <div class="form-group">
@@ -119,7 +131,7 @@ if(isset($_POST['submit'])){
                                             </div>
                                             <?php } ?>
                                             <div class="col-xs-6">
-                                                <button type="button" class="btn btn-secondary btn-block" onclick="window.location.href='index.php'">Go Back</button>
+                                                <button type="button" class="btn btn-secondary btn-block" onclick="window.location.href='all_books.php'">Go Back</button>
                                             </div>
                                         </div>
                                     </div>

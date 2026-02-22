@@ -1,0 +1,11 @@
+@startuml
+start
+:User Request;
+if (Admin Approval?) then (Yes)
+  :Update Status;
+  :Adjust Book Quantity;
+else (No)
+  :Notify User;
+endif
+stop
+@enduml

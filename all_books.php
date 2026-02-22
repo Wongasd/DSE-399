@@ -3,7 +3,11 @@
 include_once("database/db.php");
 
 // Fetch books data from the database
-$queryBooks = "SELECT b.BookID, b.Title, b.Image, b.Quantity, 
+$queryBooks = "SELECT b.BookID, 
+                      b.Title, 
+                      b.Image, 
+                      b.Quantity,
+                      b.TypeID, 
                       CONCAT(a.FirstName, ' ', a.LastName) AS AuthorName 
                FROM books b 
                JOIN authors a ON b.AuthorID = a.AuthorID
@@ -73,7 +77,7 @@ $Permission = isset($_SESSION['Permission']) ? $_SESSION['Permission'] : '';
                     <?php
                     // Fetch all books
                     $queryAllBooks = "
-                        SELECT b.BookID, b.Title, b.Image, 
+                        SELECT b.BookID, b.Title, b.Image, b.TypeID, 
                                CONCAT(a.FirstName, ' ', a.LastName) AS AuthorName 
                         FROM books b 
                         JOIN authors a ON b.AuthorID = a.AuthorID";
@@ -127,7 +131,7 @@ $Permission = isset($_SESSION['Permission']) ? $_SESSION['Permission'] : '';
                         <?php
                         // Fetch books for this genre
                         $queryBooksByGenre = "
-                            SELECT b.BookID, b.Title, b.Image, 
+                            SELECT b.BookID, b.Title, b.Image, b.TypeID,
                                    CONCAT(a.FirstName, ' ', a.LastName) AS AuthorName 
                             FROM books b 
                             JOIN authors a ON b.AuthorID = a.AuthorID
@@ -145,7 +149,20 @@ $Permission = isset($_SESSION['Permission']) ? $_SESSION['Permission'] : '';
                                     <figure class="product-style">
                                         <img src="<?php echo htmlspecialchars($book['Image']); ?>" 
                                              alt="<?php echo htmlspecialchars($book['Title']); ?>" class="product-item">
-                                        <button type="button" class="add-to-cart" data-product-tile="add-to-cart">Add to Cart</button>
+                                        
+                                    <?php if ($Permission == '1') { ?>
+										<!-- If the user is an admin, the button redirects to the edit page -->
+										<button type="button" class="add-to-cart" data-product-tile="add-to-cart" onclick="window.location.href='edit_book.php?BookID=<?=$book['BookID']?>'">Edit</button>
+									<?php } elseif($Permission == '3') { ?>
+										<button type="button" class="add-to-cart" data-product-tile="add-to-cart" onclick="window.location.href='edit_book.php?BookID=<?=$book['BookID']?>'">Edit</button>
+									<?php } elseif($Permission == '2') { ?>
+										<!-- If the user is not an admin, the button redirects to the borrow page -->
+                                        <button type="button" class="add-to-cart" data-product-tile="add-to-cart" onclick="window.location.href='book_details.php?BookID=<?=$book['BookID']?>'">View</button>									
+                                    <?php } else { ?>
+                                    <!-- If the user is not logged in or has no permission, show an alert and redirect to login -->
+										<button type="button" class="add-to-cart" data-product-tile="add-to-cart" onclick="alert('Please login first'); window.location.href='login.php';">Login to Continue</button>                                    
+                                    <?php }  ?>
+                                    
                                     </figure>
                                     <figcaption>
                                         <h3><?php echo htmlspecialchars($book['Title']); ?></h3>
@@ -186,6 +203,19 @@ $Permission = isset($_SESSION['Permission']) ? $_SESSION['Permission'] : '';
                 document.querySelector(tab.getAttribute('data-tab-target')).classList.add('active');
             });
         });
+
+        document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".add-to-cart").forEach(function (btn) {
+
+        btn.addEventListener("click", function () {
+            const bookId = this.getAttribute("data-book-id");
+
+            if (bookId) {
+                window.location.href = "reader_router.php?book_id=" + bookId;
+                        }
+                    });
+                });
+            });
     </script>
 	
 </body>

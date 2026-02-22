@@ -2,6 +2,8 @@
 // Include the database connection file
 include_once("database/db.php");
 
+$user_status = $_SESSION['Status'];
+
 // Get the BookID from the URL
 if (isset($_GET['BookID'])) {
     $BookID = $_GET['BookID'];
@@ -96,34 +98,46 @@ if (isset($_GET['BookID'])) {
                             </p>
                         </div>
                     </div>
-                    
-                    <!-- Optionally, you can add a "Go back" button -->
-                     <div class="text-center mt-4">
+
+                    <div class="text-center mt-4">
+                        <!-- Go back button -->
                         <a href="#" class="btn btn-secondary me-2"
-                            onclick="if (document.referrer) { history.back(); } else { window.location.href='index.php'; }">
+                        onclick="if (document.referrer) { history.back(); } else { window.location.href='index.php'; }">
                             Go back
                         </a>
 
-                        <?php if ($book['Quantity'] > 0 && $book['Status'] != "Unavailable"): ?>
-                            <?php if (isset($_SESSION['UserID'])): ?>
-                                <!-- User is logged in → Show Borrow Button -->
-                                <a href="borrow.php?BookID=<?php echo $BookID; ?>" class="btn btn-success">
-                                    Borrow This Book
-                                </a>
-                            <?php else: ?>
-                                <!-- User NOT logged in → Show Login Prompt -->
-                                <a href="login.php" class="btn btn-outline-success">
-                                    Login to Borrow
-                                </a>
-                            <?php endif; ?>
-                        <?php else: ?>
-                            <!-- Book is out of stock → Disable Borrow Button -->
-                                <a href="#" class="btn btn-secondary disabled-link" tabindex="-1" aria-disabled="true">
-                                    Out of Stock
-                                </a>
-                        <?php endif; ?>
+                        <?php
+                        // Determine button state
+                        $isOutOfStock = $book['Quantity'] == 0 || $book['Status'] == "Unavailable";
+                        $isBanned = isset($_SESSION['Status']) && $_SESSION['Status'] === "Banned";
+                        $isLoggedIn = isset($_SESSION['UserID']);
+                        ?>
 
+                        <?php if ($isOutOfStock): ?>
+                            <!-- Book is out of stock -->
+                            <a href="#" class="btn btn-secondary disabled-link" tabindex="-1" aria-disabled="true">
+                                Out of Stock
+                            </a>
+                        <?php elseif ($isBanned): ?>
+                            <!-- User is banned -->
+                            <a href="#" class="btn btn-secondary disabled-link"
+                            onclick="alert('You have been banned from borrowing books'); window.location.href='index.php'; return false;"
+                            tabindex="-1" aria-disabled="true">
+                                You Have been banned
+                            </a>
+                        <?php elseif (!$isLoggedIn): ?>
+                            <!-- User not logged in -->
+                            <a href="login.php" class="btn btn-outline-success">
+                                Login to Borrow
+                            </a>
+                        <?php else: ?>
+                            <!-- User logged in and allowed, book available -->
+                            <a href="borrow.php?BookID=<?php echo $BookID; ?>" class="btn btn-success">
+                                Borrow This Book
+                            </a>
+                        <?php endif; ?>
                     </div>
+
                 </div>
             </div>
         </div>

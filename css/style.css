@@ -1,0 +1,46 @@
+/* paged manga */
+
+.manga-body {
+    background: #111;
+    color: white;
+    text-align: center;
+}
+
+.manga-paged-container {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+}
+
+.manga-single-page {
+    width: 100%;
+    max-height: 90vh;
+    object-fit: contain;
+}
+
+.manga-nav {
+    margin-top: 15px;
+    font-size: 18px;
+}
+
+.manga-nav a {
+    color: white;
+    text-decoration: none;
+    margin: 0 20px;
+    background: #222;
+    padding: 8px 14px;
+    border-radius: 6px;
+}
+
+.page-indicator {
+    font-weight: bold;
+}
+
+.page-jump {
+    margin-top: 15px;
+}
+
+.page-jump input {
+    width: 80px;
+    padding: 5px;
+}
