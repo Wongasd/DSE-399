@@ -11,6 +11,15 @@ $total = $conn->query("
     WHERE BookID = $book_id
 ")->fetch_assoc()['total'];
 
+// Check if no pages exist
+if ($total == 0) {
+    echo "<script>
+            alert('This book is under maintenance.');
+            window.location.href='all_books_online.php';
+          </script>";
+    exit;
+}
+
 /* current page */
 $result = $conn->query("
     SELECT *

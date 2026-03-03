@@ -34,7 +34,7 @@ $membershipDate = $userRow['MembershipDate'];
 $userStatus = strtolower($userRow['Status']);
 
 /* ===============================
-   🚫 CHECK IF USER IS BANNED
+   CHECK IF USER IS BANNED
 ================================= */
 if ($userStatus === 'banned') {
     echo "<script>
