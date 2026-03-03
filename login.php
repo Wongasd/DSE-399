@@ -84,7 +84,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     </div>
                                     <div class="form-group">
                                         <label for="Password">Password</label>
-                                        <input type="text" name="Password" placeholder="Enter Your Password..." class="form-password form-control" id="Password" required>
+                                        <input type="password" name="Password" placeholder="Enter Your Password..." class="form-password form-control" id="Password" required>
+                                    </div>
+                                    <div class="form-group text-end">
+                                        <a href="forget_password.php" class="text-white">Forgot Password?</a>
                                     </div>
                                     
                                     <div class="form-group">
