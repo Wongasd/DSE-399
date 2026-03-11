@@ -75,9 +75,8 @@ $UserID = isset($_SESSION['UserID']) ? $_SESSION['UserID'] : '';
 							<div class="main-menu stellarnav">
 								<ul class="menu-list" style="display: flex;justify-content: flex-start;align-items: center;gap: 20px;">
 									<li class="menu-item active"><a href="index.php">Home</a></li>
-
 									<li class="menu-item has-sub" style="position: relative">
-										<a href="all_pages.php" class="nav-link">Pages</a>
+										<a href="#pages" class="nav-link">Pages</a>
 
 										<ul>
 											<li class="active"><a href="index.php">Home</a></li>							
@@ -115,7 +114,6 @@ $UserID = isset($_SESSION['UserID']) ? $_SESSION['UserID'] : '';
 										</ul>
 
 									</li>
-									
 									<li class="menu-item"><a href="about_us.php" class="nav-link">About Us</a></li>
 										<li class="menu-item"><a href="#featured-books" class="nav-link">Featured</a></li>
 
@@ -135,42 +133,3 @@ $UserID = isset($_SESSION['UserID']) ? $_SESSION['UserID'] : '';
 				</div>
 			</div>
 		</header>
-
-		<script>
-/* ====== Menu Pagination ====== */
-const menu = document.querySelector('.menu-items');
-const prevBtn = document.querySelector('.menu-nav.prev');
-const nextBtn = document.querySelector('.menu-nav.next');
-
-const totalItems = menu.children.length;
-const visibleItems = 5;
-let currentIndex = 0;
-
-function updateMenu() {
-    menu.style.transform = `translateX(-${currentIndex * (100 / visibleItems)}%)`;
-    prevBtn.disabled = currentIndex === 0;
-    nextBtn.disabled = currentIndex >= totalItems - visibleItems;
-}
-
-prevBtn.addEventListener('click', () => {
-    if (currentIndex > 0) { currentIndex--; updateMenu(); }
-});
-nextBtn.addEventListener('click', () => {
-    if (currentIndex < totalItems - visibleItems) { currentIndex++; updateMenu(); }
-});
-
-updateMenu();
-
-/* ====== Search Filter ====== */
-const searchInput = document.getElementById('search-input');
-
-searchInput.addEventListener('input', function() {
-    const filter = this.value.toLowerCase();
-    const items = document.querySelectorAll('.product-item'); // adjust selector based on content
-
-    items.forEach(item => {
-        const text = item.textContent.toLowerCase();
-        item.style.display = text.includes(filter) ? '' : 'none';
-    });
-});
-</script>
