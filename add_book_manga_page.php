@@ -4,6 +4,15 @@ include_once("database/db.php");
 // Get book_id from URL
 $book_id = isset($_GET['book_id']) ? (int)$_GET['book_id'] : 0;
 
+$stmt = $conn->prepare("SELECT Title FROM books WHERE BookID=?");
+$stmt->bind_param("i", $book_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$book = $result->fetch_assoc();
+
+$bookTitle = $book ? $book['Title'] : "Unknown Book";
+
+
 /* =====================================================
    FUNCTION: CREATE BOOK FOLDER BASED ON BOOK TITLE
 ===================================================== */
@@ -114,6 +123,11 @@ body{
 <form method="POST" enctype="multipart/form-data">
 
 <div class="form-group">
+<label>Manga Title</label>
+<input type="text" name="PageTitle" class="form-control" value="<?=$bookTitle?>" readonly>
+</div>
+
+<div class="form-group">
 <label>Manga Page Image</label>
 <input type="file" name="PageImage" class="form-control" required>
 </div>
@@ -129,7 +143,7 @@ body{
 
 <button type="submit" class="btn btn-success">Add Page</button>
 
-<a href="view_manga.php?book_id=<?php echo $book_id; ?>" class="btn btn-secondary">Back</a>
+<a href="all_books_data.php" class="btn btn-secondary">Back</a>
 
 </form>
 

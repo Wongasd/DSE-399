@@ -4,11 +4,11 @@ include_once("database/db.php");
 // Get book_id from URL and validate
 $book_id = isset($_GET['book_id']) ? (int)$_GET['book_id'] : 0;
 
-if ($book_id <= 0) {
-    // Invalid book_id, redirect back
-    header("Location: all_books_data.php");
-    exit;
-}
+// if ($book_id <= 0) {
+//     // Invalid book_id, redirect back
+//     header("Location: all_books_data.php");
+//     exit;
+// }
 
 /* ===============================
    FETCH BOOK TYPE
@@ -25,10 +25,10 @@ $result = $stmt->get_result();
 $row = $result->fetch_assoc();
 
 // Check if book exists
-if (!$row) {
-    header("Location: all_books_data.php");
-    exit;
-}
+// if (!$row) {
+//     header("Location: all_books_data.php");
+//     exit;
+// }
 
 // Store type info
 $type_id = (int)$row['TypeID'];

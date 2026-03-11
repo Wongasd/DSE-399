@@ -98,9 +98,9 @@ $Permission = isset($_SESSION['Permission']) ? $_SESSION['Permission'] : '';
 
 									<?php if ($Permission == '1') { ?>
 										<!-- If the user is an admin, the button redirects to the edit page -->
-										<button type="button" class="add-to-cart" data-product-tile="add-to-cart" onclick="window.location.href='admin_router.php?BookID=<?=$book['BookID']?>'">Edit</button>
+										<button type="button" class="add-to-cart" data-product-tile="add-to-cart" onclick="window.location.href='admin_router.php?book_id=<?=$book['BookID']?>&type_id=<?=$book['TypeID']?>'">Add</button>
 									<?php } elseif($Permission == '3') { ?>
-										<button type="button" class="add-to-cart" data-product-tile="add-to-cart" onclick="window.location.href='admin_router.php_data?BookID=<?=$book['BookID']?>'">Edit</button>
+										<button type="button" class="add-to-cart" data-product-tile="add-to-cart" onclick="window.location.href='admin_router.php_data?BookID=<?=$book['BookID']?>&type_id=<?=$book['TypeID']?>'">Add</button>
 									<?php } elseif($Permission == '2') { ?>
                                         <button type="button" class="add-to-cart" data-product-tile="add-to-cart" onclick="window.location.href='index.php'">Go away</button>									
                                     <?php } else { ?>

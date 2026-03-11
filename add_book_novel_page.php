@@ -4,6 +4,13 @@ include_once("database/db.php");
 // Get book_id from URL
 $book_id = isset($_GET['book_id']) ? (int)$_GET['book_id'] : 0;
 
+$stmt = $conn->prepare("SELECT Title FROM books WHERE BookID=?");
+$stmt->bind_param("i", $book_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$book = $result->fetch_assoc();
+
+$bookTitle = $book ? $book['Title'] : "Unknown Book";
 
 function createBookFolder($conn, $book_id) {
 
@@ -113,6 +120,11 @@ body{
 <form method="POST" enctype="multipart/form-data">
 
 <div class="form-group">
+<label>Novel Title</label>
+<input type="text" name="PageTitle" class="form-control" value="<?=$bookTitle?>" readonly>
+</div>
+
+<div class="form-group">
 <label>Page Title</label>
 <input type="text" name="PageTitle" class="form-control" required>
 </div>
@@ -142,7 +154,7 @@ body{
 
 <button type="submit" class="btn btn-success">Add Page</button>
 
-<a href="view_book.php?book_id=<?php echo $book_id; ?>" class="btn btn-secondary">
+<a href="all_books_data.php" class="btn btn-secondary">
 Back
 </a>
 

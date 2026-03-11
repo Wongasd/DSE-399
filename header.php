@@ -40,7 +40,7 @@ $UserID = isset($_SESSION['UserID']) ? $_SESSION['UserID'] : '';
 					<?php endif; ?>
 
 
-					<div class="action-menu">
+					<!-- <div class="action-menu">
 						<div class="search-bar">
 							<a href="#" class="search-button search-toggle" data-selector="#header-wrap">
 								<i class="icon icon-search"></i>
@@ -49,7 +49,8 @@ $UserID = isset($_SESSION['UserID']) ? $_SESSION['UserID'] : '';
 								<input class="search-field text search-input" placeholder="Search" type="search">
 							</form>
 						</div>
-					</div>
+					</div> -->
+					
 				</div>
 
 			</div>
