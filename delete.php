@@ -47,18 +47,27 @@ if (isset($_GET['ACTION']) && $_GET['ACTION'] === 'Delete' && isset($_GET['Publi
     exit();
 }
 
-// Handle Book Deletion
+// Handle Book Soft Delete (Update Status to 'deleted')
 if (isset($_GET['ACTION']) && $_GET['ACTION'] === 'Delete' && isset($_GET['BookID'])) {
+
     $BookID = intval($_GET['BookID']);
-    $query = "DELETE FROM books WHERE BookID = ?";
+
+    $query = "UPDATE books SET Status = 'Deleted' WHERE BookID = ?";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("i", $BookID);
 
     if ($stmt->execute()) {
-        echo "<script>alert('Book deleted successfully'); window.location.href='all_books.php';</script>";
+        echo "<script>
+                alert('Book moved to deleted successfully');
+                window.location.href='all_books.php';
+              </script>";
     } else {
-        echo "<script>alert('Error deleting book'); window.location.href='all_books.php';</script>";
+        echo "<script>
+                alert('Error updating book status');
+                window.location.href='all_books.php';
+              </script>";
     }
+
     exit();
 }
 

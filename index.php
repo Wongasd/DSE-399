@@ -7,11 +7,12 @@ $queryBooks = "SELECT b.BookID, b.Title, b.Image, b.Quantity,
                       CONCAT(a.FirstName, ' ', a.LastName) AS AuthorName 
                FROM books b 
                JOIN authors a ON b.AuthorID = a.AuthorID
-               ORDER BY b.Title ASC 
-               LIMIT 4"; // Limit to 4 featured books for display
+			   WHERE b.Status != 'Deleted'
+               ORDER BY b.Title ASC
+			   LIMIT 4"; // Limit to 4 featured books for display
 $resultBooks = mysqli_query($conn, $queryBooks);
 
-$queryBooks2 = "SELECT * FROM books ORDER BY BookID ASC LIMIT 3"; // Adjust table and column names as needed
+$queryBooks2 = "SELECT * FROM books WHERE books.Status != 'Deleted' ORDER BY BookID ASC LIMIT 4"; // Adjust table and column names as needed
 $resultBooks2 = mysqli_query($conn, $queryBooks2);
 
 $Permission = isset($_SESSION['Permission']) ? $_SESSION['Permission'] : '';

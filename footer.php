@@ -8,7 +8,7 @@
 						<div class="row">
 
 							<div class="col-md-12">
-								<p>© 2025 Library Management System</p>
+								<p>© 2026 Library Management System</p>
 							</div>
 
 							<!-- <div class="col-md-6">

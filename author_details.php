@@ -68,16 +68,18 @@ if (isset($_GET['AuthorID'])) {
                         <div class="col-md-8">
                             <p><strong>Full Name:</strong> <?php echo htmlspecialchars($author['FirstName']) . ' ' . htmlspecialchars($author['LastName']); ?></p>
                             <p><strong>Description:</strong> <?php echo htmlspecialchars($author['Description']); ?></p>
-                            <p><strong>Books Written:</strong> <?php 
+                            <!-- <p><strong>Books Written:</strong> 
+                            <?php 
                                 // Fetch the number of books written by the author
-                                $queryBooksCount = "SELECT COUNT(*) AS BookCount FROM books WHERE AuthorID = ?";
-                                $stmtBooksCount = $conn->prepare($queryBooksCount);
-                                $stmtBooksCount->bind_param("i", $AuthorID);
-                                $stmtBooksCount->execute();
-                                $resultBooksCount = $stmtBooksCount->get_result();
-                                $bookCount = $resultBooksCount->fetch_assoc();
-                                echo $bookCount['BookCount'];
-                            ?></p>
+                                // $queryBooksCount = "SELECT COUNT(*) AS BookCount FROM books WHERE AuthorID = ?";
+                                // $stmtBooksCount = $conn->prepare($queryBooksCount);
+                                // $stmtBooksCount->bind_param("i", $AuthorID);
+                                // $stmtBooksCount->execute();
+                                // $resultBooksCount = $stmtBooksCount->get_result();
+                                // $bookCount = $resultBooksCount->fetch_assoc();
+                                // echo $bookCount['BookCount'];
+                            ?>
+                            </p> -->
                         </div>
                     </div>
                     

@@ -11,6 +11,7 @@ $queryBooks = "SELECT b.BookID,
                       CONCAT(a.FirstName, ' ', a.LastName) AS AuthorName 
                FROM books b 
                JOIN authors a ON b.AuthorID = a.AuthorID
+               WHERE b.Status != 'Deleted'
                ORDER BY b.Title ASC 
                LIMIT 4"; // Limit to 4 featured books for display
 $resultBooks = mysqli_query($conn, $queryBooks);
@@ -80,7 +81,8 @@ $Permission = isset($_SESSION['Permission']) ? $_SESSION['Permission'] : '';
                         SELECT b.BookID, b.Title, b.Image, b.TypeID, 
                                CONCAT(a.FirstName, ' ', a.LastName) AS AuthorName 
                         FROM books b 
-                        JOIN authors a ON b.AuthorID = a.AuthorID";
+                        JOIN authors a ON b.AuthorID = a.AuthorID
+                        ";
                     $resultAllBooks = mysqli_query($conn, $queryAllBooks);
 
                     // Check for database errors
@@ -135,7 +137,9 @@ $Permission = isset($_SESSION['Permission']) ? $_SESSION['Permission'] : '';
                                    CONCAT(a.FirstName, ' ', a.LastName) AS AuthorName 
                             FROM books b 
                             JOIN authors a ON b.AuthorID = a.AuthorID
-                            WHERE b.GenreID = " . intval($genre['GenreID']);
+                            WHERE b.GenreID = " . intval($genre['GenreID']) . "
+                            AND b.Status != 'Deleted'
+                            ";
                         $resultBooksByGenre = mysqli_query($conn, $queryBooksByGenre);
 
                         // Check for database errors
